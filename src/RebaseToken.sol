@@ -4,6 +4,8 @@ pragma solidity ^0.8.24;
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
+import {IRebaseToken} from "./interfaces/IRebaseToken.sol";
+
 // Layout of Contract:
 // version
 // imports
@@ -32,7 +34,7 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
  * @notice The interest rate in the smart contract can only decrease
  * @notice Each user will have their own interest rate that is the global interest rate at the time of depositing
  */
-contract RebaseToken is ERC20, Ownable, AccessControl {
+contract RebaseToken is ERC20, Ownable, AccessControl, IRebaseToken {
     /*//////////////////////////////////////////////////////////////
                                  ERRORS
     //////////////////////////////////////////////////////////////*/
