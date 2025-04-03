@@ -46,7 +46,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl, IRebaseToken {
     //////////////////////////////////////////////////////////////*/
     uint256 private constant PRECISION_FACTOR = 1e18;
     bytes32 private constant MINT_AND_BURN_ROLE = keccak256("MINT_AND_BURN_ROLE");
-    uint256 private s_interestRate = 5e10;
+    uint256 private s_interestRate = (5 * PRECISION_FACTOR) / 1e8; // 5e10
     mapping(address user => uint256 interestRate) private s_userInterestRate;
     mapping(address user => uint256 lastUpdatedTimestamp) private s_userLastUpdatedTimestamp;
 
@@ -72,8 +72,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl, IRebaseToken {
      * @dev The interest rate can only decrease
      */
     function setInterestRate(uint256 _newInterestRate) external onlyOwner {
-        // ????
-        if (_newInterestRate > s_interestRate) {
+        if (_newInterestRate >= s_interestRate) {
             revert RebaseToken__InterestRateCanOnlyDecrease();
         }
 
@@ -98,9 +97,6 @@ contract RebaseToken is ERC20, Ownable, AccessControl, IRebaseToken {
      * @param _amount The amount of tokens to burn
      */
     function burn(address _from, uint256 _amount) external onlyRole(MINT_AND_BURN_ROLE) {
-        if (_amount == type(uint256).max) {
-            _amount = balanceOf(_from);
-        }
         _mintAccruedInterest(_from);
         _burn(_from, _amount);
     }
@@ -111,7 +107,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl, IRebaseToken {
      * @param _user The user to calculate the balance of
      * @return The balance of the user including any accumulated interest
      */
-    function balanceOf(address _user) public view override returns (uint256) {
+    function balanceOf(address _user) public view override(ERC20, IRebaseToken) returns (uint256) {
         // get the current principle balance of the user (the number of tokens that have actually been minted to the user)
         // multiply the principle balance by the interest that has accumulated in the time since the balance was last updated
         return (super.balanceOf(_user) * _calculateUserAccumulatedInterestSinceLastUpdate(_user)) / PRECISION_FACTOR;
