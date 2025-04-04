@@ -7,8 +7,8 @@ import {Pool} from "@ccip/contracts/src/v0.8/ccip/libraries/Pool.sol";
 import {IRebaseToken} from "./interfaces/IRebaseToken.sol";
 
 contract RebaseTokenPool is TokenPool {
-    constructor(IERC20 _token, address[] memory _allowList, address _rnmProxy, address _router)
-        TokenPool(_token, _allowList, _rnmProxy, _router)
+    constructor(IERC20 _token, address[] memory _allowList, address _rmnProxy, address _router)
+        TokenPool(_token, _allowList, _rmnProxy, _router)
     {}
 
     function lockOrBurn(Pool.LockOrBurnInV1 calldata lockOrBurnIn)
