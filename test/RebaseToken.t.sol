@@ -134,9 +134,16 @@ contract RebaseTokenTest is Test {
     }
 
     function testCannotCallMintAndBurn() public {
+        // Get the interest rate first, outside of the prank and expectRevert
+        uint256 interestRate = rebaseToken.getInterestRate();
+
+        // Now test mint
         vm.prank(user);
         vm.expectPartialRevert(IAccessControl.AccessControlUnauthorizedAccount.selector);
-        rebaseToken.mint(user, 100, rebaseToken.getInterestRate());
+        rebaseToken.mint(user, 100, interestRate);
+
+        // Test burn
+        vm.prank(user);
         vm.expectPartialRevert(IAccessControl.AccessControlUnauthorizedAccount.selector);
         rebaseToken.burn(user, 100);
     }
